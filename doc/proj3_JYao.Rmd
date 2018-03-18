@@ -8,16 +8,22 @@ output: html_document
 ## Construct RGB Features
 
 ```{r}
+library(readr)
+library(ggplot2)
+library(caret)
+library(Matrix)
+library(xgboost)
+
 set.seed(1)
 source("../lib/featureRGB.R")
 
 img_dir <- "../data/train/train/images/"
 
-time <- system.time(rgb_feature <- featureRGB(img_dir,export = T))
+time_ftr <- system.time(rgb_feature <- featureRGB(img_dir,export = T))
 
 #rgb_feature <- featureRGB(img_dir,export = T)
 
-cat("Time for constructing RGB features is",time[3],"s \n")
+cat("Time for constructing RGB features is",time_ftr[3],"s \n")
 
 labeldata <- read.csv("../data/train/train/label_train.csv")
 rgb_feature$label <- labeldata$label
@@ -31,17 +37,25 @@ write.csv(train.rgb,file = "../output/rgbftr_train.csv")
 
 write.csv(test.rgb,file = "../output/rgbftr_test.csv")
 
+write.csv(rgb_feature, file = "../output/rgbftr.csv")
+
 ```
 
 ## XGboost based on RGB features
 
 ```{r}
 source("../lib/xgb.R")
-cv_rgb <- xgb_param(train.rgb,5)
+time_cv <- system.time(cv_rgb <- xgb_param(train.rgb,5))
+cat("Time for selecting best parameters is",time_cv[3],"s \n")
 
 param <- cv_rgb$best_param
-model <- xgb_model(train.rgb,param)
-pred <- xgb_pred(model, test.rgb)
+
+time_model <- system.time(model <- xgb_model(train.rgb,param))
+cat("Time for building xgboost model is",time_model[3],"s \n")
+
+time_pred <- system.time(pred <- xgb_pred(model, test.rgb))
+cat("Time for predicting test data is",time_pred[3],"s \n")
+
 pred$err
 ```
 
