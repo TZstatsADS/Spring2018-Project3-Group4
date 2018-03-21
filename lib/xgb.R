@@ -13,7 +13,7 @@ xgb_model <- function(train,par){
     num_parallel_tree  = 1,                 # default
     lambda             = 0,                 # default
     lambda_bias        = 0,                 # default
-  alpha              = 0,                 # default
+    alpha              = 0,                 # default
     # Task Parameters
     objective          = "multi:softmax",   # default = "reg:linear"
     num_class          = 3,                 # default = 0

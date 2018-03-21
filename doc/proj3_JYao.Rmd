@@ -21,8 +21,6 @@ img_dir <- "../data/train/train/images/"
 
 time_ftr <- system.time(rgb_feature <- featureRGB(img_dir,export = T))
 
-#rgb_feature <- featureRGB(img_dir,export = T)
-
 cat("Time for constructing RGB features is",time_ftr[3],"s \n")
 
 labeldata <- read.csv("../data/train/train/label_train.csv")
@@ -39,6 +37,10 @@ write.csv(test.rgb,file = "../output/rgbftr_test.csv")
 
 write.csv(rgb_feature, file = "../output/rgbftr.csv")
 
+#train.rgb <- read.csv("../output/rgbftr_train.csv")
+#train.rgb <- train.rgb[,-1]
+#test.rgb <- read.csv("../output/rgbftr_test.csv")
+#test.rgb <- test.rgb[,-1]
 ```
 
 ## XGboost based on RGB features
@@ -50,11 +52,28 @@ cat("Time for selecting best parameters is",time_cv[3],"s \n")
 
 param <- cv_rgb$best_param
 
+#param <- list(eta = 0.15, max_depth = 4)
 time_model <- system.time(model <- xgb_model(train.rgb,param))
 cat("Time for building xgboost model is",time_model[3],"s \n")
 
 time_pred <- system.time(pred <- xgb_pred(model, test.rgb))
 cat("Time for predicting test data is",time_pred[3],"s \n")
+
+imp <- xgb.importance(feature_names = colnames(train.rgb),model = model)
+
+imp_col <- head(imp$Feature)
+imp_col <- as.numeric(gsub("X","",imp_col))
+Bimp <- (imp_col%/%120)+1
+Gimp <- ((imp_col%%120)%/%10)+1
+Rimp <- (imp_col%%120)%%10
+
+col <- NULL
+for(i in 1:length(imp_col)){
+  temp <- rgb(Rimp[i]*12-6,Gimp[i]*10-5,Bimp[i]*10-5,maxColorValue = 120)
+  col <- c(col,temp)
+}
+
+col # important colors
 
 pred$err
 ```

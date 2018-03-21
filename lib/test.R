@@ -24,3 +24,11 @@ test <- function(fit_train, dat_test){
   return(as.numeric(pred> 0.5))
 }
 
+xgb_pred <- function(model,test){
+  test$label <- test$label-1
+  test_smm <- sparse.model.matrix(label~.,data = test)
+  pred <- predict(model,test_smm)
+  err <- mean(pred!=test$label)
+  return(list("pred"=pred+1, "err" = err))
+}
+

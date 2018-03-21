@@ -1,0 +1,130 @@
+---
+title: "main_proj3"
+author: "Group 4"
+date: "March 20, 2018"
+output: html_document
+---
+
+```{r}
+packages.used <- c("readr", "ggplot2", "caret", "Matrix",
+                   "xgboost")
+
+# check packages that need to be installed.
+packages.needed <- setdiff(packages.used,
+                           intersect(installed.packages()[,1],
+                                     packages.used))
+# install additional packages
+if(length(packages.needed) > 0) {
+  install.packages(packages.needed,dependencies = TRUE,
+  repos = 'http://cran.us.r-project.org')
+}
+
+library(readr)
+library(ggplot2)
+library(caret)
+library(Matrix)
+library(xgboost)
+
+```
+
+### Step 0: Specify directories.
+
+Set the working directory to the image folder. Specify the training and the testing set. For data without an independent test/validation set, you need to create your own testing data by random subsampling. In order to obain reproducible results, set.seed() whenever randomization is used. 
+
+```{r wkdir, eval=FALSE}
+#setwd("../Spring2018-Project3-Group4") 
+# here replace it with your own path or manually set it in RStudio to where this rmd file is located. 
+```
+
+Provide directories for raw images. Training set and test set should be in different subfolders. 
+```{r}
+experiment_dir <- "../data/train/" # This will be modified for different data sets.
+img_train_dir <- paste(experiment_dir, "train/", sep="")
+img_test_dir <- paste(experiment_dir, "test/", sep="")
+```
+
+### Step 1: Set up controls for evaluation experiments.
+
+In this chunk, ,we have a set of controls for the evaluation experiments. 
+
++ (T/F) cross-validation on the training set
++ (number) K, the number of CV folds
++ (T/F) process features for training set
++ (T/F) run evaluation on an independent test set
++ (T/F) process features for test set
+
+```{r exp_setup}
+run.cv=TRUE # run cross-validation on the training set
+K <- 5  # number of CV folds
+run.feature.train=TRUE # process features for training set
+run.test=TRUE # run evaluation on an independent test set
+run.feature.test=TRUE # process features for test set
+```
+
+Using cross-validation or independent test set evaluation, we compare the performance of different classifiers or classifiers with different specifications.
+
+```{r model_setup}
+#model_values <- seq(3, 11, 2)
+#model_labels = paste("GBM with depth =", model_values)
+```
+
+### Step 2: Import training images class labels.
+
+In the dataset, label 1,2 and 3 correspond to fried chickens, dogs and blueberry muffins.
+
+```{r train_label}
+label_train <- read.csv(paste(experiment_dir, "train/label_train.csv", sep=""), header=T)$label
+```
+
+### Step 3: Construct visual feature.
+
+```{r feature}
+source("../lib/feature.R")
+
+time_ftrRGB <- system.time(rgb_feature <- featureRGB(img_train_dir,export = T))
+cat("Time for constructing RGB features is",time_ftrRGB[3],"s \n")
+
+rgb_feature$label <- label_train
+
+trainimg <- sample(1:3000,2100)
+testimg <- setdiff(1:3000,trainimg)
+train.rgb <- rgb_feature[trainimg,]
+test.rgb <- rgb_feature[testimg,]
+
+write.csv(train.rgb,file = "../output/rgbftr_train.csv")
+write.csv(test.rgb,file = "../output/rgbftr_test.csv")
+write.csv(rgb_feature, file = "../output/rgbftr.csv")
+```
+
+
+### Step 4: Train a classification model with training images.
+
+```{r}
+source("../lib/train.R")
+source("../lib/test.R")
+```
+
+## Baseline model: GBM
+
+
+## Advanced model 1: Xgboost
+
+```{r}
+time_cv.Xgb <- system.time(cv_rgb <- xgb_param(train.rgb,K))
+cat("Time for selecting best parameters is",time_cv.Xgb[3],"s \n")
+
+param <- cv_rgb$best_param
+#param <- list(eta = 0.15, max_depth = 4)
+
+time_model <- system.time(model <- xgb_model(train.rgb,param))
+cat("Time for building xgboost model is",time_model[3],"s \n")
+
+time_pred <- system.time(pred <- xgb_pred(model, test.rgb))
+cat("Time for predicting test data is",time_pred[3],"s \n") 
+```
+
+## Advanced model 2: SVM
+
+### Summary of running time
+
+
