@@ -32,13 +32,13 @@ library(xgboost)
 Set the working directory to the image folder. Specify the training and the testing set. For data without an independent test/validation set, you need to create your own testing data by random subsampling. In order to obain reproducible results, set.seed() whenever randomization is used. 
 
 ```{r wkdir, eval=FALSE}
-#setwd("../Spring2018-Project3-Group4") 
+#setwd("") 
 # here replace it with your own path or manually set it in RStudio to where this rmd file is located. 
 ```
 
 Provide directories for raw images. Training set and test set should be in different subfolders. 
 ```{r}
-experiment_dir <- "../data/train/" # This will be modified for different data sets.
+experiment_dir <- "../data/" # This will be modified for different data sets.
 img_train_dir <- paste(experiment_dir, "train/", sep="")
 img_test_dir <- paste(experiment_dir, "test/", sep="")
 ```
@@ -81,6 +81,8 @@ label_train <- read.csv(paste(experiment_dir, "train/label_train.csv", sep=""), 
 ```{r feature}
 source("../lib/feature.R")
 
+set.seed(3)
+
 time_ftrRGB <- system.time(rgb_feature <- featureRGB(img_train_dir,export = T))
 cat("Time for constructing RGB features is",time_ftrRGB[3],"s \n")
 
@@ -88,6 +90,12 @@ rgb_feature$label <- label_train
 
 trainimg <- sample(1:3000,2100)
 testimg <- setdiff(1:3000,trainimg)
+labeldf <- read.csv(paste(experiment_dir, "train/label_train.csv", sep=""), header=T)
+
+img <- 1:3000
+labeldf$train <- ifelse(img %in% trainimg,1,0)
+write.csv(labeldf,file = "../data/train/label2.csv")
+
 train.rgb <- rgb_feature[trainimg,]
 test.rgb <- rgb_feature[testimg,]
 
