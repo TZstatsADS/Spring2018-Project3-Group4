@@ -17,7 +17,7 @@ library(xgboost)
 set.seed(1)
 source("../lib/featureRGB.R")
 
-img_dir <- "../data/train/train/images/"
+img_dir <- "../data/train/train/"
 
 time_ftr <- system.time(rgb_feature <- featureRGB(img_dir,export = T))
 
