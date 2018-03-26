@@ -94,7 +94,7 @@ labeldf <- read.csv(paste(experiment_dir, "train/label_train.csv", sep=""), head
 
 img <- 1:3000
 labeldf$train <- ifelse(img %in% trainimg,1,0)
-write.csv(labeldf,file = "../data/train/label2.csv")
+write.csv(labeldf[,-1],file = "../data/train/label2.csv")
 
 train.rgb <- rgb_feature[trainimg,]
 test.rgb <- rgb_feature[testimg,]
