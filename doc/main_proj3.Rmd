@@ -7,7 +7,7 @@ output: html_document
 
 ```{r}
 packages.used <- c("readr", "ggplot2", "caret", "Matrix",
-                   "xgboost","EBImage", "e1071")
+                   "xgboost","EBImage", "e1071","knitr")
 
 # check packages that need to be installed.
 packages.needed <- setdiff(packages.used,
@@ -26,6 +26,7 @@ library(Matrix)
 library(xgboost)
 library(EBImage)
 library(e1071)
+library(knitr)
 ```
 
 ### Step 0: Specify directories.
@@ -125,11 +126,13 @@ cat("Time for selecting best parameters is",time_cv.Xgb[3],"s \n")
 param <- cv_rgb$best_param
 #param <- list(eta = 0.15, max_depth = 4)
 
-time_model <- system.time(model <- xgb_model(train.rgb,param))
-cat("Time for building xgboost model is",time_model[3],"s \n")
+time_model1 <- system.time(model <- xgb_model(train.rgb,param))
+cat("Time for building xgboost model is",time_model1[3],"s \n")
 
-time_pred <- system.time(pred <- xgb_pred(model, test.rgb))
-cat("Time for predicting test data is",time_pred[3],"s \n") 
+time_pred1 <- system.time(pred <- xgb_pred(model, test.rgb))
+cat("Time for predicting test data is",time_pred1[3],"s \n") 
+err1 <- pred$err
+err1
 ```
 
 ## Advanced model 2: SVM
@@ -153,9 +156,9 @@ train.Y <- Y[Index]; test.Y <- Y[-Index]
 # linear SVM with soft margin
 linear_params <- list(cost = c(0.0001, 0.001, 0.01, 0.1))
 lin_tc <- tune.control(cross = K)
-linsvm_tune <- tune(svm, train.x = train.X, train.y = train.Y,
+time_cv.linsvm <- system.time(linsvm_tune <- tune(svm, train.x = train.X, train.y = train.Y,
                     kernel = "linear", scale = F, ranges = linear_params, 
-                    tunecontrol = lin_tc)
+                    tunecontrol = lin_tc))
 linsvm_summary <- summary(linsvm_tune)
 perf_linsvm <- linsvm_tune$performances; perf_linsvm 
 
@@ -163,26 +166,37 @@ perf_linsvm <- linsvm_tune$performances; perf_linsvm
 rbf_params <-list(cost=c(0.001, 0.01, 0.1, 1),gamma=c(0.01, 0.1, 1, 10, 100))
 
 rbf_tc <- tune.control(cross = K)
-rbfsvm_tune <- tune(svm, train.x = train.X, train.y = train.Y,
+time_cv.RBFsvm <- system.time(rbfsvm_tune <- tune(svm, train.x = train.X, train.y = train.Y,
                kernel = "radial", scale = F, ranges = rbf_params, 
-               tunecontrol = rbf_tc)
+               tunecontrol = rbf_tc))
 rbfsvm_summary <- summary(rbfsvm_tune)
 perf_rbfsvm <- rbfsvm_tune$performances
 
 # Linear SVM test set estimates of the error rates
-linsvm_best <- linsvm_summary$best.model
-linsvm_pred <- predict(linsvm_best, test.X)
-mean(linsvm_pred != test.Y)
+time_model2 <- system.time(linsvm_best <- linsvm_summary$best.model)
+time_pred2 <- system.time(insvm_pred <- predict(linsvm_best, test.X))
+err2 <- mean(linsvm_pred != test.Y)
+err2
 
 # RBF SVM test set estimates of the error rates
-rbfsvm_best <- rbfsvm_summary$best.model
-rbfsvm_pred <- predict(rbfsvm_best, test.X)
-mean(rbfsvm_pred != test.Y)
+time_model3 <- system.time(rbfsvm_best <- rbfsvm_summary$best.model)
+time_pred3 <- system.time(rbfsvm_pred <- predict(rbfsvm_best, test.X))
+err3 <- mean(rbfsvm_pred != test.Y)
+err3
 ```
 
-### Summary of running time
+### Summary of performances
+```{r}
+showtable <- data.frame("Error"=c(err1,err2,err3),
+                        "CV time" = c(time_cv.Xgb[3], time_cv.linsvm[3],time_cv.RBFsvm[3]),
+                        "Model training time"=c(time_model1[3],time_model2[3],time_model3[3]),
+                        "Prediction time"=c(time_pred1[3],time_pred2[3],time_pred3[3]))
 
-## fine tuning on MobileNet
+kable(showtable, caption = "Performance Report")
+```
+
+
+### Final Advanced Model: Fine tuning on MobileNet
 This method is built on python 3.6, required packages: keras, tensorflow 1.4, opencv-python, skimage, pickle, scikit-learn.
 ### Preprocessing
 resize the images to a fixed size.
