@@ -1,9 +1,7 @@
 # Project: Dogs, Fried Chicken or Blueberry Muffins?
 ![image](figs/chicken.jpg)
 ![image](figs/muffin.jpg)
-![image](figs/muffin.jpg)
-![image](figs/Logistic regression with L2 penalty.png)
-![image](figs/model comparation.png)
+
 
 ### [Full Project Description](doc/project3_desc.md)
 
@@ -18,14 +16,45 @@ Term: Spring 2018
 	+ Yao, Jingtian
 
 In this project, we created a classification engine for 3000 images of dogs versus fried chicken versus blueberry muffins using various model evaluation and selection methods. The primary concerns and evaluation criterion are around computational efficiency and memory cost. We found that MobileNet has a very high validation accuracy and it is relatively computational efficient when comparing to other CNN structures. This model outperforms all other non-deep-learning models in accuracy, and it is not computational costly, which means it could be applied to the mobile device very efficiently.  
-For feature extraction, our team compared various methods including ORB, SIFT,SURF, RGB about the performance regarding the feature dimensions and extraction time. On top of the base model using SIFT feature extraction and Gradient Boosting method, we applied a series number of advanced models including LinearSVM, RBF kernel SVM, XGBoost.
+
+This project can be divided into 2 part:
+#### Part 1 Feature extraction
+For feature extraction, our team compared various methods including :
++ ORB 
++ SIFT (basic)
++ SURF (fast version of sift)
++ RGB (with color)
+
+
+![image](figs/RGB_feature.jpg)
+
+Feature extraction requires a lot of time for preprocessing. In ORB, SIFT, SURF we use bags of words idea and choose 2000 as number of cluster. After K-means clustering, we have 2000 features to describe each picture. The performance depends on the feature dimensions and extraction time. 
+
+#### Part 2 Classification machine
+On top of the base model using SIFT feature extraction and Gradient Boosting method, we applied a series number of advanced models including :
++ LinearSVM 
++ SVM with RBF kernel
++ XGBoost
++ Logisitcal Classifier
+
+All the parameter for each model are fine-tuned with 5-fold cross-validation techniques. Take the basic logistical regression as an example:
+
+![image](figs/Logistic_regression_with_L1_penalty.png)
+![image](figs/Logistic_regression_with_L2_penalty.png)
+
+We compare each model with different parameters and evaluate the time efficiency. For each model we choose the parameter with the best performance.
 
 
 
-
+#### Part 3 Deep-learning: state of art image analysis
 
 + Advanced Model: We applied fine tuning on MobileNet, pretrained on ImageNet, as our advanced model. And after cross-validation, we change the final dense layer from dense(1024) to dense(256), which has 256 units in the layer.
 
+![image](figs/depthwise_separable_convolution.png)
+
+The model comparison within deep-learning model:
+
+![image](figs/model_comparation.png)
 
 
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
