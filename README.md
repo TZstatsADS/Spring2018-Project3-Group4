@@ -18,7 +18,7 @@ In this project, we created a classification engine for 3000 images of dogs vers
 For feature extraction, our team compared various methods including ORB, SIFT,SURF, RGB about the performance regarding the feature dimensions and extraction time. On top of the base model using SIFT feature extraction and Gradient Boosting method, we applied a series number of advanced models including LinearSVM, RBF kernel SVM, XGBoost.
 
 
-![image](figs/Logistic regression with L1 penalty.png)
+![image](figs/Logistic regression with L1 penalty.png?raw=true)
 ![image](figs/Logistic regression with L2 penalty.png)
 ![image](figs/model comparation.png)
 
