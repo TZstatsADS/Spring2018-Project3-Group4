@@ -210,7 +210,9 @@ cv_data$y <- c(cv_256, cv_512, cv_1024)
 cv_data$x <- as.factor(rep(c(256,512,1024),each=5))
 cv_data <- as.data.frame(cv_data)
 ggplot(data=cv_data,aes(x=x,y=y))+
-  geom_boxplot(aes(fill=x))
+  geom_boxplot(aes(fill=x))+
+  xlab('number of units in the last dense layer')+
+  ylab('5 folds validation accuracy')
 ```
 
 
