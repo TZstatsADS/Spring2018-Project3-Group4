@@ -6,15 +6,16 @@
 
 Term: Spring 2018
 
-+ Team #
++ Team #4
 + Team members
-	+ team member 1
-	+ team member 2
-	+ team member 3
-	+ team member 4
-	+ team member 5
+	+ Lin, Yanjun
+	+ Jiang, Chenfei
+	+ Tao, Wenyi
+	+ Wan, Qianhui
+	+ Yao, Jingtian
 
-+ Project summary: In this project, we created a classification engine for images of dogs versus fried chicken versus blueberry muffins. 
++ Project summary: In this project, we created a classification engine for 3000 images of dogs versus fried chicken versus blueberry muffins using various model evaluation and selection methods. The primary concerns and evaluation criterion are around computational efficiency and memory cost. For feature extraction, our team compared various methods including ORB, SIFT,SURF, RGB about the performance regarding the feature dimensions and extraction time. On top of the base model using SIFT feature extration and Gradient Boosting method, we applied a series number of advanced models including LinearSVM, RBF kernal SVM, XGBoost, 
+
 	
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
