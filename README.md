@@ -14,7 +14,7 @@ Term: Spring 2018
 	+ Wan, Qianhui
 	+ Yao, Jingtian
 
-+ Project summary: In this project, we created a classification engine for 3000 images of dogs versus fried chicken versus blueberry muffins using various model evaluation and selection methods. The primary concerns and evaluation criterion are around computational efficiency and memory cost. We found that MobileNet has a very high validation accuracy and it is relatively computational efficient when comparing to other CNN structures. This model outperforms all other non-deep-learning models in accuracy, and it is not computational costy, which means it could be applied to the mobile device very efficiently.
++ Project summary: In this project, we created a classification engine for 3000 images of dogs versus fried chicken versus blueberry muffins using various model evaluation and selection methods. The primary concerns and evaluation criterion are around computational efficiency and memory cost. We found that MobileNet has a very high validation accuracy and it is relatively computational efficient when comparing to other CNN structures. This model outperforms all other non-deep-learning models in accuracy, and it is not computational costy, which means it could be applied to the mobile device very efficiently.  
 For feature extraction, our team compared various methods including ORB, SIFT,SURF, RGB about the performance regarding the feature dimensions and extraction time. On top of the base model using SIFT feature extration and Gradient Boosting method, we applied a series number of advanced models including LinearSVM, RBF kernal SVM, XGBoost.
 
 	
