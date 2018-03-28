@@ -11,9 +11,14 @@ Below is an example. If no contribution statement is provided, we will insert a 
 ---
 Sample project README statement.
 
-Project xxx
+Project 3: Dogs, Fried Chicken or Blueberry Muffins?
 
-Team members: Avi Bond, Comma Deed, En Funn, Gem Hon
+Team members:
++ Lin, Yanjun
++ Jiang, Chenfei
++ Tao, Wenyi
++ Wan, Qianhui
++ Yao, Jingtian
 
 Summary: In this project, we developed a new method and improved the classification accuracy for images of cats and dogs to 99.9%
 
