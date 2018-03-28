@@ -182,4 +182,53 @@ mean(rbfsvm_pred != test.Y)
 
 ### Summary of running time
 
+## fine tuning on MobileNet
+This method is built on python 3.6, required packages: keras, tensorflow 1.4, opencv-python, skimage, pickle, scikit-learn.
+### Preprocessing
+resize the images to a fixed size.
+```{r}
+system('python ../lib/preprocessing.py --img_size=224')
+```
 
+### Corss Validation
+Conduct cross validation on the number of hidden unit in the last hidden dense layer.
+```{r}
+if(run.cv){
+  system('python ../lib/cross_validation.py --k 5 --hidden_unit_list 256 512 1024 --batch_size 128')
+}
+```
+Running this on GCP with Nvidia K80, need 2 hours (about 20s an epoch). The result validation scores are [0.99095238095238103, 0.98857142857142866, 0.98999999999999999] for 256 512 1024 units. This would indicate that the hidden unit size might have minor effect on the result.
+
+Here is the result copy from GCP
+```{r}
+cv_256 <- c(0.98809523809523814, 0.98809523809523814, 0.99523809523809526, 0.98809523809523814, 0.99523809523809526)
+cv_512 <- c(0.99047619047619051, 0.98333333333333328, 0.99047619047619051, 0.98571428571428577, 0.99285714285714288)
+cv_1024 <- c(0.98333333333333328, 0.98809523809523814, 0.99285714285714288, 0.99047619047619051, 0.99523809523809526)
+library(ggplot2)
+cv_data <- NULL
+cv_data$y <- c(cv_256, cv_512, cv_1024)
+cv_data$x <- as.factor(rep(c(256,512,1024),each=5))
+cv_data <- as.data.frame(cv_data)
+ggplot(data=cv_data,aes(x=x,y=y))+
+  geom_boxplot(aes(fill=x))
+```
+
+
+### Training on partial of the provided training data (2100), predict on validation data (900) to compare with other models.
+```{r}
+system('python ../lib/train.py --hidden_unit 256 --epochs 30 --all_data 0')
+```
+
+### Training on all provided data and save the model
+```{r}
+system.time(system('python ../lib/train.py --hidden_unit 256 --epochs 30 --all_data 1'))
+```
+
+### Test new data
+```{r}
+if (run.test){
+  # resize data
+  system.time(system('python ../lib/preprocessing.py --img_size=224 --train 0 --img_dir ../data/test/images --lab_dir ../data/test/label.csv'))
+  system.time(system('python ../lib/test.py --hidden_unit 256 --model_path ../output/keras_model/mobilenet_1522197600.hdf5 '))
+}
+```
