@@ -8,6 +8,8 @@ output: html_document
 ## Construct RGB Features
 
 ```{r}
+install.packages("caret")
+install.packages("xgboost")
 library(readr)
 library(ggplot2)
 library(caret)
@@ -17,9 +19,11 @@ library(xgboost)
 set.seed(1)
 source("../lib/featureRGB.R")
 
-img_dir <- "../data/train/train/"
+img_dir <- "../data/train/train/images/"
 
 time_ftr <- system.time(rgb_feature <- featureRGB(img_dir,export = T))
+
+#rgb_feature <- featureRGB(img_dir,export = T)
 
 cat("Time for constructing RGB features is",time_ftr[3],"s \n")
 
@@ -37,10 +41,6 @@ write.csv(test.rgb,file = "../output/rgbftr_test.csv")
 
 write.csv(rgb_feature, file = "../output/rgbftr.csv")
 
-#train.rgb <- read.csv("../output/rgbftr_train.csv")
-#train.rgb <- train.rgb[,-1]
-#test.rgb <- read.csv("../output/rgbftr_test.csv")
-#test.rgb <- test.rgb[,-1]
 ```
 
 ## XGboost based on RGB features
@@ -48,34 +48,17 @@ write.csv(rgb_feature, file = "../output/rgbftr.csv")
 ```{r}
 source("../lib/xgb.R")
 time_cv <- system.time(cv_rgb <- xgb_param(train.rgb,5))
-cat("Time for selecting best parameters is",time_cv[3],"s \n")
+cat("Time for selecting best parameters is",time_cv[3],"s \n") #10950.59
 
 param <- cv_rgb$best_param
 
-#param <- list(eta = 0.15, max_depth = 4)
-time_model <- system.time(model <- xgb_model(train.rgb,param))
+time_model <- system.time(model <- xgb_model(train.rgb,param)) #29.112 
 cat("Time for building xgboost model is",time_model[3],"s \n")
 
 time_pred <- system.time(pred <- xgb_pred(model, test.rgb))
-cat("Time for predicting test data is",time_pred[3],"s \n")
+cat("Time for predicting test data is",time_pred[3],"s \n")  #3.698 
 
-imp <- xgb.importance(feature_names = colnames(train.rgb),model = model)
-
-imp_col <- head(imp$Feature)
-imp_col <- as.numeric(gsub("X","",imp_col))
-Bimp <- (imp_col%/%120)+1
-Gimp <- ((imp_col%%120)%/%10)+1
-Rimp <- (imp_col%%120)%%10
-
-col <- NULL
-for(i in 1:length(imp_col)){
-  temp <- rgb(Rimp[i]*12-6,Gimp[i]*10-5,Bimp[i]*10-5,maxColorValue = 120)
-  col <- c(col,temp)
-}
-
-col # important colors
-
-pred$err
+pred$err  #0.09555556
 ```
 
 
@@ -94,5 +77,6 @@ pred2 <- xgb_pred(model2, test.sift)
 pred2$err
 
 ```
+
 
 

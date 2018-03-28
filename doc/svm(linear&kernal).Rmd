@@ -1,0 +1,110 @@
+---
+title: "SVM linear and kernal"
+author: "Qianhui"
+date: "3/19/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(EBImage)
+library(e1071)
+
+           
+train_proportion=0.70  
+new.feature.train =T    
+new.feature.test=T    
+run.test=T        
+
+# import training images labels
+setwd("/Users/whs/Documents/GitHub/Spring2018-Project3-Group4")
+y <- read.csv("./data/train/train/label_train.csv", header=T)
+Y <- y[ ,-1]
+Y <- as.factor(Y$label)
+n <-length(Y)
+
+# extract features
+X <-read.csv("/Users/whs/Documents/GitHub/Spring2018-Project3-Group4/output/rgbftr.csv",header = T)
+X <- X[, -1442]
+X <- X[, -1] ## last col is label
+head(X)
+
+# split into training and testing dataset
+set.seed(0)
+Index <-sample(3000,round(train_proportion*3000,1),replace = F)
+test  <- setdiff(1:3000, Index)
+
+train.X <- data.matrix(X[Index,])
+test.X <- data.matrix(X[test,])
+
+train.Y <- Y[Index]
+test.Y <- Y[-Index]
+```
+
+
+Train classification model using linearSVM and kernalSVM
+```{r}
+train_svm <- function(train.X, train.Y, cost){
+  model = svm(train.X, train.Y, cost = cost, kernel = "linear")
+  return(model)
+} 
+
+train_svm_kernel <- function(train.X, train.Y, cost, gamma){
+  model = svm(train.X, train.Y, cost = cost, gamma = gamma, type = "C", kernel = "radial")
+  return(model)
+} 
+```
+
+Model selesction(CV to find the best cost parameter)
+```{r}
+source("../lib/svm.cv.R")
+
+svm.margin.cv(train.X, train.Y, c(0.001, 0.01, 0.03, 0.1))
+svm.kernel.cv(train.X, train.Y, c(0.001, 0.01, 0.03, 0.1), c(0.1, 0.2, 0.005)) 
+
+##  for linear svm, the lowest error is 0.6167 when cost is 0.001. 
+##  for RBF Kernel, the lowest error is 0.6804 for any given cost and gamma above. 
+## So linear svm works slightly better than RBF.
+```
+
+## make prediction with the test data
+```{r}
+test_svm <- function(model, data, class){
+  pred <- predict(model,data)
+  return(mean(pred != class))
+}
+
+error.linear <- test_svm(train_svm(test.X, test.Y, 0.1), test.X, test.Y)
+error.RBF   <- test_svm(train_svm_kernel(test.X, test.Y, 0.03, 0.005), test.X, test.Y)
+error.linear
+error.RBF
+
+##  the error rate of linear svm and RBF is 0.65111. 
+```
+
+## compare running time
+```{r}
+## Time for training the model
+linear.train.time <-system.time(train_svm(train.X, train.Y, 0.01))
+rbf.train.time    <-system.time(train_svm_kernel(train.X, train.Y, 0.01, 0.1))
+
+## Time for selecting best parameters 
+linear.cv.time    <-system.time(svm.margin.cv(train.X, train.Y, c(0.001, 0.01, 0.03, 0.1)))
+rbf.cv.time       <-system.time(svm.kernel.cv(train.X, train.Y, c(0.001, 0.01, 0.03, 0.1), c(0.1, 0.2, 0.005)))
+
+## time for predicting
+linear.pred.time <- system.time(test_svm(train_svm(test.X, test.Y, 0.001), test.X, test.Y))
+rbf.pred.time  <- system.time(test_svm(train_svm_kernel(test.X, test.Y, 0.001, 0.03), test.X, test.Y))
+
+linear.train.time
+rbf.train.time  
+linear.cv.time 
+rbf.cv.time 
+linear.pred.time
+rbf.pred.time 
+# linear svm model spends less time compared to RBF Kernel.
+```
+

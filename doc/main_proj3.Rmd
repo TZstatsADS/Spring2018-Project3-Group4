@@ -7,7 +7,7 @@ output: html_document
 
 ```{r}
 packages.used <- c("readr", "ggplot2", "caret", "Matrix",
-                   "xgboost")
+                   "xgboost","EBImage", "e1071")
 
 # check packages that need to be installed.
 packages.needed <- setdiff(packages.used,
@@ -24,7 +24,8 @@ library(ggplot2)
 library(caret)
 library(Matrix)
 library(xgboost)
-
+library(EBImage)
+library(e1071)
 ```
 
 ### Step 0: Specify directories.
@@ -132,6 +133,52 @@ cat("Time for predicting test data is",time_pred[3],"s \n")
 ```
 
 ## Advanced model 2: SVM
+```{r}
+set.seed(0)
+train_proportion=0.70  
+# import training images labels
+y <- read.csv("../data/train/label_train.csv", header=T)
+Y <- y[ ,-1]
+Y <- as.factor(Y$label)
+n <-length(Y)
+# extract features
+X <-read.csv("../output/rgbftr.csv",header = T)
+X <- X[, -1]
+X <- X[, -ncol(X)]
+Index <-sample(3000,round(train_proportion*3000,1),replace = F)
+test  <- setdiff(1:3000, Index)
+train.X <- data.matrix(X[Index,]); test.X <- data.matrix(X[test,])
+train.Y <- Y[Index]; test.Y <- Y[-Index]
+
+# linear SVM with soft margin
+linear_params <- list(cost = c(0.0001, 0.001, 0.01, 0.1))
+lin_tc <- tune.control(cross = K)
+linsvm_tune <- tune(svm, train.x = train.X, train.y = train.Y,
+                    kernel = "linear", scale = F, ranges = linear_params, 
+                    tunecontrol = lin_tc)
+linsvm_summary <- summary(linsvm_tune)
+perf_linsvm <- linsvm_tune$performances; perf_linsvm 
+
+# SVM with soft margin and RBF kernel
+rbf_params <-list(cost=c(0.001, 0.01, 0.1, 1),gamma=c(0.01, 0.1, 1, 10, 100))
+
+rbf_tc <- tune.control(cross = K)
+rbfsvm_tune <- tune(svm, train.x = train.X, train.y = train.Y,
+               kernel = "radial", scale = F, ranges = rbf_params, 
+               tunecontrol = rbf_tc)
+rbfsvm_summary <- summary(rbfsvm_tune)
+perf_rbfsvm <- rbfsvm_tune$performances
+
+# Linear SVM test set estimates of the error rates
+linsvm_best <- linsvm_summary$best.model
+linsvm_pred <- predict(linsvm_best, test.X)
+mean(linsvm_pred != test.Y)
+
+# RBF SVM test set estimates of the error rates
+rbfsvm_best <- rbfsvm_summary$best.model
+rbfsvm_pred <- predict(rbfsvm_best, test.X)
+mean(rbfsvm_pred != test.Y)
+```
 
 ### Summary of running time
 
