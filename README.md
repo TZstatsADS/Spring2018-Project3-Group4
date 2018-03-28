@@ -1,6 +1,9 @@
 # Project: Dogs, Fried Chicken or Blueberry Muffins?
 ![image](figs/chicken.jpg)
 ![image](figs/muffin.jpg)
+![image](figs/muffin.jpg)
+![image](figs/Logistic regression with L2 penalty.png)
+![image](figs/model comparation.png)
 
 ### [Full Project Description](doc/project3_desc.md)
 
@@ -18,9 +21,7 @@ In this project, we created a classification engine for 3000 images of dogs vers
 For feature extraction, our team compared various methods including ORB, SIFT,SURF, RGB about the performance regarding the feature dimensions and extraction time. On top of the base model using SIFT feature extraction and Gradient Boosting method, we applied a series number of advanced models including LinearSVM, RBF kernel SVM, XGBoost.
 
 
-![image](figs/Logistic regression with L1 penalty.png?raw=true)
-![image](figs/Logistic regression with L2 penalty.png)
-![image](figs/model comparation.png)
+
 
 
 + Advanced Model: We applied fine tuning on MobileNet, pretrained on ImageNet, as our advanced model. And after cross-validation, we change the final dense layer from dense(1024) to dense(256), which has 256 units in the layer.
