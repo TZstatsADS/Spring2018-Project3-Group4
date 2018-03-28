@@ -2,67 +2,39 @@
 ### Main execution script for experiments ###
 #############################################
 
-### Author: Yuting Ma
+### Author: Group 4
 ### Project 3
-### ADS Spring 2016
+### ADS Spring 2018
 
-### Specify directories
-setwd("./proj3_sample")
 
-img_train_dir <- "./data/zipcode_train/"
-img_test_dir <- "./data/zipcode_test/"
 
-### Import training images class labels
-label_train <- read.table("./data/zip_train_label.txt", header=F)
-label_train <- as.numeric(unlist(label_train) == "9")
+#####################
+#  Advanced Model:  #
+#    Fine Tuning    #
+#     MobileNet     #
+#####################
 
-### Construct visual feature
-source("./lib/feature.R")
+### Resize image and seperate train and validation according to label2.csv
+tm_feature_train <- system.time(
+  system('python ../lib/preprocessing.py --img_size=224 --train 1 --lab_dir ../output/label2.csv --img_dir ../data/train/images --out_dir ../output/data'))
 
-tm_feature_train <- system.time(dat_train <- feature(img_train_dir, "img_zip_train"))
-tm_feature_test <- system.time(dat_test <- feature(img_test_dir, "img_zip_test"))
-save(dat_train, file="./output/feature_train.RData")
-save(dat_test, file="./output/feature_test.RData")
+### Cross Validation on the number of hidden unit in the last Dense layer
+system('python ../lib/cross_validation.py --k 5 --hidden_unit_list 256 512 1024 --batch_size 128')
 
-### Train a classification model with training images
-source("./lib/train.R")
-source("./lib/test.R")
+### Training on all provided data and save the model
+tm_train <- system.time(
+  system('python ../lib/train.py --hidden_unit 256 --epochs 30 --all_data 1'))
 
-### Model selection with cross-validation
-# Choosing between different values of interaction depth for GBM
-source("./lib/cross_validation.R")
-depth_values <- seq(3, 11, 2)
-err_cv <- array(dim=c(length(depth_values), 2))
-K <- 5  # number of CV folds
-for(k in 1:length(depth_values)){
-  cat("k=", k, "\n")
-  err_cv[k,] <- cv.function(dat_train, label_train, depth_values[k], K)
-}
-save(err_cv, file="./output/err_cv.RData")
+### Resize image from test set
+tm_feature_test <- system.time(
+  system('python ../lib/preprocessing.py --img_size=224 --train 0 --img_dir ../data/test/images --lab_dir ../data/test/label.csv'))
 
-# Visualize CV results
-pdf("./fig/cv_results.pdf", width=7, height=5)
-plot(depth_values, err_cv[,1], xlab="Interaction Depth", ylab="CV Error",
-     main="Cross Validation Error", type="n", ylim=c(0, 0.15))
-points(depth_values, err_cv[,1], col="blue", pch=16)
-lines(depth_values, err_cv[,1], col="blue")
-arrows(depth_values, err_cv[,1]-err_cv[,2],depth_values, err_cv[,1]+err_cv[,2], 
-      length=0.1, angle=90, code=3)
-dev.off()
-
-# Choose the best parameter value
-depth_best <- depth_values[which.min(err_cv[,1])]
-par_best <- list(depth=depth_best)
-
-# train the model with the entire training set
-tm_train <- system.time(fit_train <- train(dat_train, label_train, par_best))
-save(fit_train, file="./output/fit_train.RData")
-
-### Make prediction 
-tm_test <- system.time(pred_test <- test(fit_train, dat_test))
-save(pred_test, file="./output/pred_test.RData")
+### Predict on new data use trained model and save the result to label.csv
+tm_test <- system.time(
+  system('python ../lib/test.py --hidden_unit 256 --model_path ../output/keras_model/mobilenet_1522197600.hdf5 '))
 
 ### Summarize Running Time
+cat('Fine tuning on MobileNet (imagenet pretraine)')
 cat("Time for constructing training features=", tm_feature_train[1], "s \n")
 cat("Time for constructing testing features=", tm_feature_test[1], "s \n")
 cat("Time for training model=", tm_train[1], "s \n")
