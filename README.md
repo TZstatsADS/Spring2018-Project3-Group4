@@ -18,23 +18,27 @@ In this project, we created a classification engine for 3000 images of dogs vers
 For feature extraction, our team compared various methods including ORB, SIFT,SURF, RGB about the performance regarding the feature dimensions and extraction time. On top of the base model using SIFT feature extraction and Gradient Boosting method, we applied a series number of advanced models including LinearSVM, RBF kernel SVM, XGBoost.
 
 
+![image](figs/Logistic regression with L1 penalty.png)
+![image](figs/Logistic regression with L2 penalty.png)
+![image](figs/model comparation.png)
+
+
 + Advanced Model: We applied fine tuning on MobileNet, pretrained on ImageNet, as our advanced model. And after cross-validation, we change the final dense layer from dense(1024) to dense(256), which has 256 units in the layer.
-    
+
+
+
 **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is organized as follows.
 
-![image](figs/Logistic regression with L1 penalty.png)
-![image](figs/Logistic regression with L2 penalty.png)
 
-![image](figs/model comparation.png)
 
 ```
 proj/
-©À©¤©¤ lib/
-©À©¤©¤ data/
-©À©¤©¤ doc/
-©À©¤©¤ figs/
-©¸©¤©¤ output/
+â”œâ”€â”€ lib/
+â”œâ”€â”€ data/
+â”œâ”€â”€ doc/
+â”œâ”€â”€ figs/
+â””â”€â”€ output/
 ```
 Please see each subfolder for a README file.
