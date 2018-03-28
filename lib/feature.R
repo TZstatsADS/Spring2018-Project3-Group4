@@ -14,9 +14,9 @@ featureRGB <- function(img_dir, export = T){
   library(grDevices)
   
   # number of R,G,B
-  nR <- 10
-  nG <- 10
-  nB <- 10
+  nR <- 5
+  nG <- 5
+  nB <- 5
   rBin <- seq(0, 1, length.out=nR)
   gBin <- seq(0, 1, length.out=nG)
   bBin <- seq(0, 1, length.out=nB)
