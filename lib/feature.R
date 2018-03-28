@@ -2,13 +2,13 @@
 ### Construct visual features for training/testing images ###
 #############################################################
 
-### Authors: Yuting Ma/Tian Zheng
+### Authors: Jingtian Yao
 ### Project 3
 ### ADS Spring 2017
 
 featureRGB <- function(img_dir, export = T){
   ### Input: a directory that contains images ready for processing
-  ### Output: an .RData file contains processed RGB features for the images  
+  ### Output: a dataframe contains processed RGB features for the images  
   
   library(EBImage)
   library(grDevices)
