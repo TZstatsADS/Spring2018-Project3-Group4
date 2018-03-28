@@ -42,21 +42,19 @@ def main(img_size=224,
         print('finished')
         
     else:
+        label = pd.read_csv(lab_dir,index_col=0)
         X_test = []
-        for file in os.dirlist(img_dir):
-            if file[-4:] is not '.jpg':
-                continue
-            else:
-                img = cv2.imread(os.path.join(img_dir,file))
-                img = transform.resize(img,[224,224]).astype(np.float32)
-                img = transform.resize(img,[img_size,img_size]).astype(np.float32)
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                X_test.append(img)
-        X_test = np.arrag(X_test,dtype=np.float32)
+        for i,r in label.iterrows():
+            #print (r.iloc[1])
+            img = cv2.imread(img_dir+'/'+r.iloc[0][-4:]+'.jpg')
+            img = transform.resize(img,[img_size,img_size]).astype(np.float32)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            X_test.append(img)
+        X_test = np.array(X_test,dtype=np.float32)
         X_test = 255 * X_test
         X_test = X_test.astype(np.uint8)
         with open(out_dir+'/test_data'+str(img_size)+'.pkl', "wb") as output_file:
-             pkl.dump((X_train, y_train, X_val, y_val), output_file)
+             pkl.dump((X_test), output_file)
         print('shape of X_test:', X_test.shape)
     
 if __name__ == "__main__":
@@ -75,7 +73,7 @@ if __name__ == "__main__":
         default='../output/data')
     parser.add_argument(
         "--train", help="Is it the train data or the test data",
-        default=True,type=bool)
+        default=1,type=int)
     
     args = parser.parse_args()
     main(img_size=args.img_size,

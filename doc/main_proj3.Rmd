@@ -174,5 +174,14 @@ system('python ../lib/train.py --hidden_unit 256 --epochs 30 --all_data 0')
 
 ### Training on all provided data and save the model
 ```{r}
-system('python ../lib/train.py --hidden_unit 256 --epochs 30 --all_data 1')
+system.time(system('python ../lib/train.py --hidden_unit 256 --epochs 30 --all_data 1'))
+```
+
+### Test new data
+```{r}
+if (run.test){
+  # resize data
+  system.time(system('python ../lib/preprocessing.py --img_size=224 --train 0 --img_dir ../data/test/images --lab_dir ../data/test/label.csv'))
+  system.time(system('python ../lib/test.py --hidden_unit 256 --model_path ../output/keras_model/mobilenet_1522197600.hdf5 '))
+}
 ```
