@@ -2,9 +2,9 @@
 ### Fit the classification model with testing data ###
 ######################################################
 
-### Author: Yuting Ma
+### Author: Group 4
 ### Project 3
-### ADS Spring 2016
+### ADS Spring 2018
 
 test <- function(fit_train, dat_test){
   
