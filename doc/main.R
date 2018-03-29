@@ -6,7 +6,15 @@
 ### Project 3
 ### ADS Spring 2018
 
+### base model 
+tm_base_train <- system.time(
+  system('python ../lib/basemodel.py 1'))
 
+tm_base_test<-system.time(
+  system('python ../lib/basemodel.py 0')
+)
+cat("Time for training model=", tm_base_train[1], "s \n")
+cat("Time for making prediction=", tm_base_test[1], "s \n")
 
 #####################
 #  Advanced Model:  #
@@ -40,4 +48,4 @@ cat("Time for constructing testing features=", tm_feature_test[1], "s \n")
 cat("Time for training model=", tm_train[1], "s \n")
 cat("Time for making prediction=", tm_test[1], "s \n")
 
-### base model 
+
