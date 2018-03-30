@@ -22,4 +22,15 @@ Team members:
 
 Summary: In this project, we developed a new method and improved the classification accuracy for images of cats and dogs to 99.9%
 
-[Contribution Statement] Jingtian Yao extracted RGB feature from images, trained Xgboost model and selected parameters by 5-folds cross-validation. Qianhui Wan applied SVM linear and Kernal models and improved the model by selecting tuning paramters and Cross-validation. Yanjun Lin tried serval CNNs, and compared their results and running time£¬and applied data augmentation, fine tunning on ImageNet pretrained models and cross validation on the size of last layer.Chenfei Jiang did the researches on theories, prepared the presentation,also helped running and adjusting the advanced model. All team members approve our work presented in our GitHub repository including this contribution statement.
+[Contribution Statement] 
+Jingtian Yao extracted RGB feature from images, trained Xgboost model and selected parameters by 5-folds cross-validation.
+
+Wenyi Tao extracted ORB,SIFT feature from images,trained Logistical model and selected parameters by 5-fold cross-validation.
+
+Qianhui Wan applied SVM linear and Kernal models and improved the model by selecting tuning paramters and Cross-validation. 
+
+Yanjun Lin tried serval CNNs, and compared their results and running timeÂ£Â¬and applied data augmentation, fine tunning on ImageNet pretrained models and cross validation on the size of last layer.
+
+Chenfei Jiang did the researches on theories, prepared the presentation,also helped running and adjusting the advanced model. 
+
+All team members approve our work presented in our GitHub repository including this contribution statement.
