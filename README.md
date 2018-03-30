@@ -1,4 +1,4 @@
-# Project: Dogs, Fried Chicken or Blueberry Muffins?
+﻿# Project: Dogs, Fried Chicken or Blueberry Muffins?
 ![image](figs/chicken.jpg)
 ![image](figs/muffin.jpg)
 
@@ -57,7 +57,7 @@ The model comparison within deep-learning model:
 ![image](figs/model_comparation.png)
 
 
-**Contribution statement**: Jingtian Yao extracted RGB feature from images, trained Xgboost model and selected parameters by 5-folds cross-validation. Qianhui Wan applied SVM linear and Kernal models and improved the model by selecting tuning paramters and Cross-validation. Yanjun Lin tried serval CNNs, and compared their results and running time，and applied data augmentation, fine tunning on ImageNet pretrained models and cross validation on the size of last layer.
+**Contribution statement**: Jingtian Yao extracted RGB feature from images, trained Xgboost model and selected parameters by 5-folds cross-validation. Qianhui Wan applied SVM linear and Kernal models and improved the model by selecting tuning paramters and Cross-validation. Yanjun Lin tried serval CNNs, and compared their results and running time，and applied data augmentation, fine tunning on ImageNet pretrained models and cross validation on the size of last layer.Chenfei Jiang did the researches on theories, prepared the presentation,also helped running and adjusting the advanced model.
 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is organized as follows.
